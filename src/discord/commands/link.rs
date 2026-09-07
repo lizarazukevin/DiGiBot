@@ -11,7 +11,6 @@ use serenity::all::{
 	CommandInteraction, CommandOptionType, Context, CreateCommand, CreateCommandOption,
 };
 use std::sync::Arc;
-use tracing::error;
 
 pub(super) struct UserLinkModule {
 	service: Arc<UserLinkService>,
@@ -73,12 +72,12 @@ impl CommandModule for UserLinkModule {
 		match self.service.handle(req).await {
 			Ok(msg) => ephemeral(ctx, cmd, &msg).await,
 			Err(e) => {
-				error!(error = %e, "link service failed");
 				let user_msg = match &e {
 					AppError::Message(_) => e.to_string(),
 					_ => format_error("Something went wrong. Please try again.", None),
 				};
-				ephemeral(ctx, cmd, &user_msg).await
+				ephemeral(ctx, cmd, &user_msg).await?;
+				Err(e)
 			}
 		}
 	}

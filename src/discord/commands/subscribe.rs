@@ -12,7 +12,6 @@ use serenity::all::{
 	CommandInteraction, CommandOptionType, Context, CreateCommand, CreateCommandOption,
 };
 use std::sync::Arc;
-use tracing::error;
 
 pub(super) struct SubscribeModule {
 	service: Arc<SubscribeService>,
@@ -86,12 +85,12 @@ impl CommandModule for SubscribeModule {
 		match self.service.handle(req).await {
 			Ok(msg) => ephemeral(ctx, cmd, &msg).await,
 			Err(e) => {
-				error!(error = %e, "subscribe service failed");
 				let user_msg = match &e {
 					AppError::Message(_) => e.to_string(),
 					_ => format_error("Something went wrong. Please try again.", None),
 				};
-				ephemeral(ctx, cmd, &user_msg).await
+				ephemeral(ctx, cmd, &user_msg).await?;
+				Err(e)
 			}
 		}
 	}
