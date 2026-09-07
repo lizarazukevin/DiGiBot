@@ -12,7 +12,6 @@ use serenity::all::{
 	CommandInteraction, CommandOptionType, Context, CreateCommand, CreateCommandOption,
 };
 use std::sync::Arc;
-use tracing::error;
 
 pub(super) struct AssignModule {
 	service: Arc<AssignService>,
@@ -94,12 +93,12 @@ impl CommandModule for AssignModule {
 		match self.service.handle(req, &ctx.http).await {
 			Ok(msg) => deferred_ephemeral(ctx, cmd, &msg).await,
 			Err(e) => {
-				error!(error = %e, "assign service failed");
 				let user_msg = match &e {
 					AppError::Message(_) => e.to_string(),
 					_ => format_error("Something went wrong. Please try again.", None),
 				};
-				deferred_ephemeral(ctx, cmd, &user_msg).await
+				deferred_ephemeral(ctx, cmd, &user_msg).await?;
+				Err(e)
 			}
 		}
 	}
