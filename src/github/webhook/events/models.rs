@@ -76,6 +76,20 @@ impl RepositoryInfo {
 	}
 }
 
+/// Minimal `GitHub` repository reference for `installation` webhook events.
+#[derive(Debug, Clone, Deserialize)]
+pub struct InstallationRepo {
+	#[allow(dead_code)]
+	pub id: u64,
+	#[allow(dead_code)]
+	pub name: String,
+	#[serde(deserialize_with = "deserialize_to_lowercase")]
+	pub full_name: String,
+	#[serde(default)]
+	#[allow(dead_code)]
+	pub private: bool,
+}
+
 /// Minimal repository branch reference.
 #[derive(Debug, Clone, Deserialize)]
 pub struct PullRequestRefInfo {

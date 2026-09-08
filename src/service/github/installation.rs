@@ -27,7 +27,11 @@ impl InstallationRequest {
 				"deleted" => InstallationAction::Deleted,
 				_ => InstallationAction::Other,
 			},
-			repositories: payload.repositories.into_iter().collect(),
+			repositories: payload
+				.repositories
+				.into_iter()
+				.map(|repo| repo.full_name)
+				.collect(),
 		}
 	}
 }
