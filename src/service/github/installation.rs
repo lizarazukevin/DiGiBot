@@ -5,7 +5,7 @@ use crate::github::api::pull_requests::split_repo;
 use crate::github::webhook::events::installation::InstallationPayload;
 use crate::models::subscription::SubscriptionStore;
 use std::sync::Arc;
-use tracing::{error, info};
+use tracing::info;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InstallationAction {
@@ -59,17 +59,9 @@ impl InstallationService {
 
 				for repo in &req.repositories {
 					let (owner, project) = split_repo(repo)?;
-					if let Err(e) = self
-						.sub_store
+					self.sub_store
 						.delete_all_by_owner_project(owner, project)
-						.await
-					{
-						error!(
-							error = %e,
-							repo = %repo,
-							"failed to clean up subscriptions"
-						);
-					}
+						.await?;
 				}
 			}
 			InstallationAction::Other => {}
