@@ -14,6 +14,7 @@ use crate::service::discord::health::HealthService;
 use crate::service::discord::link::UserLinkService;
 use crate::service::discord::subscribe::SubscribeService;
 use crate::service::github::installation::InstallationService;
+use crate::service::github::installation_repositories::InstallationRepositoriesService;
 use crate::service::github::issue_comment::IssueCommentService;
 use crate::service::github::pull_request::PullRequestService;
 use crate::service::github::review::ReviewService;
@@ -111,12 +112,17 @@ impl Application {
 		let installation_service =
 			Arc::new(InstallationService::new(Arc::clone(&stores.subscriptions)));
 
+		let installation_repositories_service = Arc::new(InstallationRepositoriesService::new(
+			Arc::clone(&stores.subscriptions),
+		));
+
 		let webhook_router = Arc::new(WebhookRouter::new(
 			env_config.github_webhook_secret.clone(),
 			pull_request_service,
 			review_service,
 			issue_comment_service,
 			installation_service,
+			installation_repositories_service,
 			Arc::clone(&metrics_recorder),
 		));
 

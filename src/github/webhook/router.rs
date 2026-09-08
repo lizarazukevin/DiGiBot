@@ -4,12 +4,14 @@
 use crate::app::observability::{observe, EventKind, LogContext, MetricsRecorder};
 use crate::error::AppError;
 use crate::github::webhook::events::installation::InstallationEventHandler;
+use crate::github::webhook::events::installation_repositories::InstallationRepositoriesEventHandler;
 use crate::github::webhook::events::issue_comment::IssueCommentEventHandler;
 use crate::github::webhook::events::models::GitHubEvent;
 use crate::github::webhook::events::pull_request::PullRequestEventHandler;
 use crate::github::webhook::events::review::ReviewEventHandler;
 use crate::github::webhook::signature::WebhookVerifier;
 use crate::service::github::installation::InstallationService;
+use crate::service::github::installation_repositories::InstallationRepositoriesService;
 use crate::service::github::issue_comment::IssueCommentService;
 use crate::service::github::pull_request::PullRequestService;
 use crate::service::github::review::ReviewService;
@@ -45,6 +47,7 @@ impl WebhookRouter {
 		review_service: Arc<ReviewService>,
 		issue_comment_service: Arc<IssueCommentService>,
 		installation_service: Arc<InstallationService>,
+		installation_repositories_service: Arc<InstallationRepositoriesService>,
 		recorder: Arc<dyn MetricsRecorder>,
 	) -> Self {
 		let pr: Arc<dyn WebhookEventHandler> =
@@ -55,8 +58,11 @@ impl WebhookRouter {
 			Arc::new(IssueCommentEventHandler::new(issue_comment_service));
 		let installation: Arc<dyn WebhookEventHandler> =
 			Arc::new(InstallationEventHandler::new(installation_service));
+		let installation_repositories: Arc<dyn WebhookEventHandler> = Arc::new(
+			InstallationRepositoriesEventHandler::new(installation_repositories_service),
+		);
 
-		let handlers = [pr, review, issue, installation]
+		let handlers = [pr, review, issue, installation, installation_repositories]
 			.into_iter()
 			.map(|h| (h.event_type(), h))
 			.collect();
