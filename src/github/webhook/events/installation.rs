@@ -2,7 +2,7 @@
 
 use crate::app::observability::{record_context_on_current_span, LogContext};
 use crate::error::AppError;
-use crate::github::webhook::events::models::{GitHubEvent, InstallationInfo};
+use crate::github::webhook::events::models::{GitHubEvent, InstallationInfo, InstallationRepo};
 use crate::github::webhook::router::WebhookEventHandler;
 use crate::service::github::installation::{InstallationRequest, InstallationService};
 use async_trait::async_trait;
@@ -16,7 +16,7 @@ use std::sync::Arc;
 pub struct InstallationPayload {
 	pub action: String,
 	pub installation: InstallationInfo,
-	pub repositories: Vec<String>,
+	pub repositories: Vec<InstallationRepo>,
 }
 
 pub struct InstallationEventHandler {
