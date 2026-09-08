@@ -15,3 +15,5 @@ datasources:
     access: proxy
     url: ${LOG_ENDPOINT}
     editable: false
+    jsonData:
+      maxLines: 1000

@@ -7,6 +7,7 @@ server:
 
 limits_config:
   allow_structured_metadata: true
+  retention_period: 336h
 
 common:
   ring:
@@ -15,6 +16,11 @@ common:
       store: inmemory
   replication_factor: 1
   path_prefix: /loki
+
+compactor:
+  working_directory: /loki/retention
+  retention_enabled: true
+  delete_request_store: filesystem
 
 schema_config:
   configs:
