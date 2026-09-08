@@ -13,6 +13,7 @@ pub enum GitHubEvent {
 	Push,
 	IssueComment,
 	Installation,
+	InstallationRepositories,
 	Ping,
 	Unknown(String),
 }
@@ -25,6 +26,7 @@ impl From<&str> for GitHubEvent {
 			"push" => Self::Push,
 			"issue_comment" => Self::IssueComment,
 			"installation" => Self::Installation,
+			"installation_repositories" => Self::InstallationRepositories,
 			"ping" => Self::Ping,
 			other => Self::Unknown(other.to_owned()),
 		}
@@ -40,6 +42,7 @@ impl GitHubEvent {
 			Self::Push => "push",
 			Self::IssueComment => "issue_comment",
 			Self::Installation => "installation",
+			Self::InstallationRepositories => "installation_repositories",
 			Self::Ping => "ping",
 			Self::Unknown(other) => other,
 		}
